@@ -1,0 +1,1172 @@
+{
+    "Shelly Bulb Duo RGBW": {
+        "name": "Shelly Bulb Duo RGBW",
+        "eqType_name": "jMQTT",
+        "configuration": {
+            "type": "eqpt",
+            "createtime": "2021-12-27 21:03:10",
+            "auto_add_cmd": "0",
+            "auto_add_topic": "%s\/#",
+            "commentaire": "Shelly Bulb Duo RGBW\nhttps:\/\/community.jeedom.com\/t\/shelly-colorbulb-rgbw-jmqtt\/70745\/9 (UPDATED)\nhttps:\/\/community.jeedom.com\/t\/jmqtt-partage-de-template\/71743\/54",
+            "Qos": "1",
+            "icone": "lightbulb",
+            "updatetime": "2022-11-04 17:53:18"
+        },
+        "category": {
+            "heating": "0",
+            "security": "0",
+            "energy": "0",
+            "light": "0",
+            "opening": "0",
+            "automatism": "0",
+            "multimedia": "0",
+            "default": "0"
+        },
+        "display": {
+            "width": "232px",
+            "height": "574px"
+        },
+        "commands": [
+            {
+                "eqType": "jMQTT",
+                "name": "announce",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/announce"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "color:0",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "En ligne",
+                "type": "info",
+                "subType": "binary",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/online",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "repeatEventManagement": "never",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "On",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/command",
+                    "request": "on",
+                    "retain": "0",
+                    "autoPub": "0",
+                    "timeline::enable": "0",
+                    "interact::auto::disable": "0",
+                    "actionConfirm": "0"
+                },
+                "template": {
+                    "dashboard": "core::timeLight",
+                    "mobile": "core::light"
+                },
+                "display": {
+                    "showNameOndashboard": "0",
+                    "showNameOnmobile": "0",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "value": "Ampoule",
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "color:0:status",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Off",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/command",
+                    "request": "off",
+                    "retain": "0",
+                    "autoPub": "0",
+                    "timeline::enable": "0",
+                    "interact::auto::disable": "0",
+                    "actionConfirm": "0"
+                },
+                "template": {
+                    "dashboard": "core::timeLight",
+                    "mobile": "core::light"
+                },
+                "display": {
+                    "showNameOndashboard": "0",
+                    "showNameOnmobile": "0",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "value": "Ampoule",
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Puissance",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "1",
+                "unite": "W",
+                "configuration": {
+                    "topic": "%s\/light\/0\/power",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "historizeMode": "none",
+                    "repeatEventManagement": "never",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Consommation",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "1",
+                "unite": "Wmin",
+                "configuration": {
+                    "topic": "%s\/light\/0\/energy",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "historizeMode": "none",
+                    "repeatEventManagement": "never",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "showStatsOnmobile": "0",
+                    "showStatsOndashboard": "0",
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "light:0:energy",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/light\/0\/energy",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Mode",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "jsonPath": "[mode]",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "light:0:power",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/light\/0\/power",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "setColor",
+                "type": "action",
+                "subType": "color",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"color\",\"red\":hexdec(substr(#color#,1,2)),\"green\":hexdec(substr(#color#,3,2)),\"blue\":hexdec(substr(#color#,5,2))}",
+                    "retain": "0",
+                    "autoPub": "0",
+                    "lastCmdValue": "#3b4bd4",
+                    "timeline::enable": "0",
+                    "interact::auto::disable": "0",
+                    "actionConfirm": "0"
+                },
+                "template": {
+                    "dashboard": "pimpJeedom::ColorSlider",
+                    "mobile": "pimpJeedom::ColorSlider"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "value": "hexColor",
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "---set White---",
+                "type": "action",
+                "subType": "slider",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"color\",\"white\":#slider#}",
+                    "minValue": "0",
+                    "maxValue": "255",
+                    "retain": "0",
+                    "autoPub": "0",
+                    "timeline::enable": "0",
+                    "interact::auto::disable": "0",
+                    "actionConfirm": "0",
+                    "actionCheckCmd": [],
+                    "jeedomPreExecCmd": [],
+                    "jeedomPostExecCmd": []
+                },
+                "template": {
+                    "dashboard": "default",
+                    "mobile": "default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0",
+                    "parameters": []
+                },
+                "value": "white",
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "white",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "minValue": "0",
+                    "maxValue": "255",
+                    "jsonPath": "[white]",
+                    "historyPurge": "-3 years",
+                    "historizeMode": "none"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "---set Gain---",
+                "type": "action",
+                "subType": "slider",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"color\",\"gain\":#slider#}",
+                    "retain": "0",
+                    "autoPub": "0",
+                    "timeline::enable": "0",
+                    "interact::auto::disable": "0",
+                    "actionConfirm": "0",
+                    "minValue": "0",
+                    "maxValue": "100",
+                    "actionCheckCmd": [],
+                    "jeedomPreExecCmd": [],
+                    "jeedomPostExecCmd": []
+                },
+                "template": {
+                    "dashboard": "default",
+                    "mobile": "default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "parameters": []
+                },
+                "value": "gain",
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Blanc chaud",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"white\",\"temp\":3000}",
+                    "retain": "0",
+                    "autoPub": "0"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Blanc",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"white\",\"temp\":4750}",
+                    "retain": "0",
+                    "autoPub": "0"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "command",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/command",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Blanc froid",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"white\",\"temp\":6500}",
+                    "retain": "0",
+                    "autoPub": "0"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "---set Temp---",
+                "type": "action",
+                "subType": "slider",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"white\",\"temp\":#slider#}",
+                    "minValue": "3000",
+                    "maxValue": "6500",
+                    "retain": "0",
+                    "autoPub": "0"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "value": "temp",
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "---set Brightness---",
+                "type": "action",
+                "subType": "slider",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "request": "{\"mode\":\"white\",\"brightness\":#slider#}",
+                    "retain": "0",
+                    "autoPub": "0",
+                    "timeline::enable": "0",
+                    "interact::auto::disable": "0",
+                    "actionConfirm": "0",
+                    "minValue": "0",
+                    "maxValue": "100"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "value": "brightness",
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Annonce",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/command",
+                    "request": "announce",
+                    "retain": "0",
+                    "autoPub": "0"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "ID",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/announce",
+                    "jsonPath": "[id]",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "MAC",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/announce",
+                    "jsonPath": "[mac]",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "color:0:command",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/command",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "IP",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/announce",
+                    "jsonPath": "[ip]",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "1",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "Ampoule",
+                "type": "info",
+                "subType": "binary",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "repeatEventManagement": "never",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "MAJ Firmware",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/command",
+                    "request": "update_fw",
+                    "retain": "0",
+                    "autoPub": "0"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "color:0:set",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/set",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "info",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/info",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "status",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "red",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "historizeMode": "none",
+                    "repeatEventManagement": "never",
+                    "jsonPath": "[red]",
+                    "minValue": "0",
+                    "maxValue": "255",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "green",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "historizeMode": "none",
+                    "repeatEventManagement": "never",
+                    "jsonPath": "[green]",
+                    "minValue": "0",
+                    "maxValue": "255",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "blue",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "historizeMode": "none",
+                    "repeatEventManagement": "never",
+                    "jsonPath": "[blue]",
+                    "minValue": "0",
+                    "maxValue": "255",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "getHexColor",
+                "type": "action",
+                "subType": "other",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/hexColor",
+                    "request": "sprintf(\"#%02x%02x%02x\", #[red]#, #[green]#, #[blue]#)",
+                    "retain": "0",
+                    "autoPub": "1"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "hexColor",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/hexColor",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "gain",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "historizeMode": "none",
+                    "repeatEventManagement": "never",
+                    "jsonPath": "[gain]",
+                    "minValue": "0",
+                    "maxValue": "100",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "brightness",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "timeline::enable": "0",
+                    "influx::enable": "0",
+                    "interact::auto::disable": "0",
+                    "jeedomCheckCmdOperator": "==",
+                    "historizeMode": "none",
+                    "repeatEventManagement": "never",
+                    "jsonPath": "[brightness]",
+                    "minValue": "0",
+                    "maxValue": "100",
+                    "historyPurge": "-3 years"
+                },
+                "template": {
+                    "dashboard": "core::line",
+                    "mobile": "core::line"
+                },
+                "display": {
+                    "showNameOndashboard": "1",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamedashboard": "0",
+                    "showIconAndNamemobile": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "temp",
+                "type": "info",
+                "subType": "numeric",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0\/status",
+                    "minValue": "3000",
+                    "maxValue": "6500",
+                    "jsonPath": "[temp]",
+                    "historyPurge": "-3 years",
+                    "historizeMode": "none"
+                },
+                "template": {
+                    "dashboard": "core::default",
+                    "mobile": "core::default"
+                },
+                "display": {
+                    "invertBinary": "0",
+                    "showNameOndashboard": "1",
+                    "showIconAndNamedashboard": "0",
+                    "forceReturnLineBefore": "0",
+                    "forceReturnLineAfter": "0",
+                    "showNameOnmobile": "1",
+                    "showIconAndNamemobile": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            },
+            {
+                "eqType": "jMQTT",
+                "name": "AmpouleAutre",
+                "type": "info",
+                "subType": "string",
+                "isHistorized": "0",
+                "configuration": {
+                    "topic": "%s\/color\/0"
+                },
+                "template": {
+                    "dashboard": "default",
+                    "mobile": "default"
+                },
+                "display": {
+                    "invertBinary": "0"
+                },
+                "isVisible": "0",
+                "alert": []
+            }
+        ]
+    }
+}

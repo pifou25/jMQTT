@@ -16,136 +16,138 @@
 */
 
 if (!isConnect('admin')) {
-	throw new Exception('{{401 - Accès non autorisé}}');
+    throw new Exception('{{401 - Accès non autorisé}}');
 }
 /** @var jMQTT[][] $eqNonBrokers */
 $eqNonBrokers = jMQTT::getNonBrokers();
 /** @var jMQTT[] $eqBrokers */
 $eqBrokers = jMQTT::getBrokers();
 
+// TODO: Move orphan eqLogic & cmd search and rescue in health modal
+//  labels: enhancement, php
+
 ?>
-<style>
-.w18 {
-	width: 18px;
-	text-align: center;
-	font-size: 0.9em;
-}
-</style>
 <legend><i class="fas fa-table"></i> {{Brokers}}</legend>
 <table class="table table-condensed tablesorter" id="table_healthMQTT_brk">
-	<thead>
-		<tr>
-			<th class="col-md-3">{{Broker}}</th>
-			<th class="col-md-1">{{ID}}</th>
-			<th class="col-md-1 center">{{Etat}}</th>
-			<th class="col-md-4">{{Statut}}</th>
-			<th class="col-md-2">{{Dernière communication}}</th>
-			<th class="col-md-1">{{Date de création}}</th>
-		</tr>
-	</thead>
-	<tbody>
+    <thead>
+        <tr>
+            <th class="col-md-3">{{Broker}}</th>
+            <th class="col-md-1 center">{{ID}}</th>
+            <th class="col-md-4">{{Statut}}</th>
+            <th class="col-md-1 center">{{Équipements}}</th>
+            <th class="col-md-1 center">{{Dernière comm.}}</th>
+            <th class="col-md-1 center">{{Date de création}}</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
 <?php
-
-foreach ($eqBrokers as $eqB) {
-	echo '<tr><td><a href="' . $eqB->getLinkToConfiguration() . '" style="text-decoration: none;">' . $eqB->getHumanName(true) . '</a></td>';
-	echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqB->getId() . '</span></td>';
-	echo '<td class="center">';
-	$info = $eqB->getMqttClientInfo();
-	if ($info['state'] == jMQTT::MQTTCLIENT_NOK) { //!$eqB->getIsEnable()
-		echo '<i class="fas '.$info['icon'].' w18 tooltips" title="{{Connexion au Broker désactivée}}"></i> ';
-		echo '<i class="fas fa-eye-slash w18 tooltips" title="{{Connexion désactivée}}"></i> ';
-		echo '<i class="far fa-square w18 fa-rotate-90 tooltips" title="{{Connexion désactivé}}"></i> ';
-	} else {
-		echo '<i class="fas '.$info['icon'].' w18 tooltips" title="'.(($info['state'] == jMQTT::MQTTCLIENT_OK) ? '{{Connection au Broker active}}' : '{{Connexion au Broker en échec}}').'"></i> ';
-		if ($eqB->getIsVisible())
-			echo '<i class="fas fa-eye w18 tooltips" title="{{Broker visible}}"></i> ';
-		else
-			echo '<i class="fas fa-eye-slash warning w18 tooltips" title="{{Broker masqué}}"></i> ';
-		if ($eqB->getIncludeMode())
-			echo '<i class="fas fa-sign-in-alt warning w18 fa-rotate-90 tooltips" title="{{Inclusion automatique activée}}"></i> ';
-		else
-			echo '<i class="far fa-square w18 fa-rotate-90 tooltips" title="{{Inclusion automatique désactivée}}"></i> ';
-	}
-	echo '</td>';
-	echo '<td>' . $info['message'] . '</td>';
-	echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqB->getStatus('lastCommunication') . '</span></td>';
-	echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqB->getConfiguration('createtime') . '</span></td></tr>';
+foreach ($eqBrokers as $eqB) { // List all Brokers on top
+    echo '<tr><td><a href="' . $eqB->getLinkToConfiguration() . '" class="eName" data-key="' . $eqB->getHumanName() . '" style="text-decoration: none;">' . $eqB->getHumanName(true) . '</a></td>';
+    echo '<td style="text-align:center"><span class="label label-info eId" style="font-size:1em;cursor:default;width:70px;height:20px;">' . $eqB->getId() . '</span></td>';
+    echo '<td>' . $eqB->getMqttClientInfo()['message'] . '</td>';
+    echo '<td style="text-align:center"><span class="label label-info" style="font-size:1em;cursor:default;width:60px;height:20px;">' . count($eqNonBrokers[$eqB->getId()]) . '</span></td>';
+    echo '<td style="text-align:center"><span class="label label-info" style="font-size:1em;cursor:default;width:135px;height:20px;">' . $eqB->getStatus('lastCommunication') . ' </span></td>';
+    echo '<td style="text-align:center"><span class="label label-info" style="font-size:1em;cursor:default;width:135px;height:20px;">' . $eqB->getConfiguration('createtime') . ' </span></td>';
+    echo '<td style="text-align:center"><a class="eqLogicAction" data-action="configureEq"><i class="fas fa-cogs"></i></a> ';
+    echo '<a class="eqLogicAction" data-action="removeEq"><i class="fas fa-minus-circle"></i></a></td></tr>';
 }
-
 ?>
-	</tbody>
+    </tbody>
 </table>
 <?php
-
-foreach ($eqBrokers as $eqB) {
-	echo '<legend><i class="fas fa-table"></i> ';
-	if (!array_key_exists($eqB->getId(), $eqNonBrokers))
-		echo '{{Aucun équipement connectés à}}';
-	elseif (count($eqNonBrokers[$eqB->getId()]) == 1)
-		echo '{{1 équipement connectés à}}';
-	else
-		echo count($eqNonBrokers[$eqB->getId()]).' {{équipements connectés à}}';
-	echo ' <b>' . $eqB->getName() . '</b></legend>';
-	if (array_key_exists($eqB->getId(), $eqNonBrokers)) {
-		echo '<table class="table table-condensed tablesorter" id="table_healthMQTT_'.$eqB->getId().'">';
+foreach ($eqBrokers as $eqB) { // For each Broker
+    echo '<legend><i class="fas fa-table"></i> {{Équipement(s) connectés à}} <b>' . $eqB->getName() . '</b></legend>';
+    if (count($eqNonBrokers[$eqB->getId()]) > 0) {
+        echo '<table class="table table-condensed tablesorter" id="table_healthMQTT_'.$eqB->getId().'">';
 ?>
-	<thead>
-		<tr>
-			<th class="col-md-3">{{Module}}</th>
-			<th class="col-md-1">{{ID}}</th>
-			<th class="col-md-1 center">{{Etat}}</th>
-			<th class="col-md-4">{{Inscrit au Topic}}</th>
-			<th class="col-md-2">{{Dernière communication}}</th>
-			<th class="col-md-1">{{Date de création}}</th>
-		</tr>
-	</thead>
-	<tbody>
+    <thead>
+        <tr>
+            <th class="col-md-3">{{Module}}</th>
+            <th class="col-md-1 center">{{ID}}</th>
+            <th class="col-md-4">{{Inscrit au Topic}}</th>
+            <th class="col-md-1 center">{{Commandes}}</th>
+            <th class="col-md-1 center">{{Dernière comm.}}</th>
+            <th class="col-md-1 center">{{Date de création}}</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
 <?php
-		foreach ($eqNonBrokers[$eqB->getId()] as $eqL) {
-			echo '<tr><td><a href="' . $eqL->getLinkToConfiguration() . '" style="text-decoration: none;">' . $eqL->getHumanName(true) . '</a></td>';
-			echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqL->getId() . '</span></td>';
-			echo '<td class="center">';
-			if (!$eqL->getIsEnable()) {
-				echo '<i class="fas fa-times danger w18 tooltips" title="{{Equipement désactivé}}"></i> ';
-				echo '<i class="fas fa-eye-slash w18 tooltips" title="{{Equipement désactivé}}"></i> ';
-				echo '<i class="far fa-square fa-rotate-90 w18 tooltips" title="{{Equipement désactivé}}"></i> ';
-				echo '<i class="fas fa-plug w18 tooltips" title="{{Equipement désactivé}}"></i> ';
-				echo '<i class="far fa-bell w18 tooltips" title="{{Equipement désactivé}}"></i>';
-			} else {
-					echo '<i class="fas fa-check success w18 tooltips" title="{{Equipement activé}}"></i> ';
-				if ($eqL->getIsVisible())
-					echo '<i class="fas fa-eye w18 tooltips" title="{{Equipement visible}}"></i> ';
-				else
-					echo '<i class="fas fa-eye-slash warning w18 tooltips" title="{{Equipement masqué}}"></i> ';
-				if ($eqL->getAutoAddCmd())
-					echo '<i class="fas fa-sign-in-alt warning fa-rotate-90 w18 tooltips" title="{{Inclusion automatique activée}}"></i> ';
-				else
-					echo '<i class="far fa-square fa-rotate-90 w18 tooltips" title="{{Inclusion automatique désactivée}}"></i> ';
-				if ($eqL->getConfiguration('battery_cmd') == '')
-					echo '<i class="fas fa-plug w18 tooltips" title="{{Pas d\'état de la batterie}}"></i> ';
-				elseif ($eqL->getStatus('batterydanger'))
-					echo '<i class="fas fa-battery-empty w18 danger tooltips" title="{{Batterie en fin de vie}}"></i> ';
-				elseif ($eqL->getStatus('batterywarning'))
-					echo '<i class="fas fa-battery-quarter w18 warning tooltips" title="{{Batterie en alarme}}"></i> ';
-				else
-					echo '<i class="fas fa-battery-full w18 success tooltips" title="{{Batterie OK}}"></i> ';
-				if ($eqL->getConfiguration('availability_cmd') == '')
-					echo '<i class="far fa-bell w18 tooltips" title="{{Pas d\'état de disponibilité}}"></i>';
-				elseif ($eqL->getStatus('warning'))
-					echo '<i class="fas fa-bell danger w18 tooltips" title="{{Equipement indisponible}}"></i>';
-				else
-					echo '<i class="fas fa-bell success w18 tooltips" title="{{Equipement disponible}}"></i>';
-			}
-			echo '</td>';
-			echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqL->getTopic() . '</span></td>';
-			echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqL->getStatus('lastCommunication') . '</span></td>';
-			echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqL->getConfiguration('createtime') . '</span></td></tr>';
-		}
+        foreach ($eqNonBrokers[$eqB->getId()] as $eqL) { // List every equipment on the Broker
+            echo '<tr><td><a href="' . $eqL->getLinkToConfiguration() . '" class="eName" data-key="' . $eqL->getHumanName() . '" style="text-decoration: none;">' . $eqL->getHumanName(true) . '</a></td>';
+            echo '<td style="text-align:center"><span class="label label-info eId" style="font-size:1em;cursor:default;width:70px">' . $eqL->getId() . '</span></td>';
+            echo '<td><span class="label label-info" style="font-size:1em;cursor:default;">' . $eqL->getTopic() . '</span></td>';
+            echo '<td style="text-align:center"><span class="label label-info" style="font-size:1em;cursor:default;width:60px;height:20px;">' . count($eqL->getCmd()) . '</span></td>';
+            echo '<td style="text-align:center"><span class="label label-info" style="font-size:1em;cursor:default;width:135px;height:20px;">' . $eqL->getStatus('lastCommunication') . ' </span></td>';
+            echo '<td style="text-align:center"><span class="label label-info" style="font-size:1em;cursor:default;width:135px;height:20px;">' . $eqL->getConfiguration('createtime') . ' </span></td>';
+            echo '<td style="text-align:center"><a class="eqLogicAction" data-action="configureEq"><i class="fas fa-cogs"></i></a> ';
+            echo '<a class="eqLogicAction" data-action="removeEq"><i class="fas fa-minus-circle"></i></a></td></tr>';
+        }
 ?>
-	</tbody>
+    </tbody>
 </table>
 <?php
-	} else {
-		echo '<legend></legend>'; // Add some space if no Eq on this Broker
-	}
+    } else {
+        echo '<legend></legend>'; // Add some space if no Eq on this Broker
+    }
 }
+?>
+<script>
+// Callback to remove jMQTT equipment
+$('.eqLogicAction[data-action=removeEq]').off('click').on('click', function () {
+    // Equivalent to click on $('.eqLogicAction[data-action=remove]') in plugin.template.js
+    // Just different eqId/eqName handling
+
+    var eqId = $(this).closest('tr').find('.eId').value();
+    if (eqId == undefined) {
+        $.fn.showAlert({message: '{{Veuillez sélectionner un équipement à supprimer}}', level: 'danger'});
+        return;
+    }
+    var eqName = $(this).closest('tr').find('.eName').attr('data-key');
+    jeedom.eqLogic.getUseBeforeRemove({
+        id: eqId,
+        error: function(error) { $.fn.showAlert({ message: error.message, level: 'danger' }); },
+        success: function(data) {
+            var text = `{{Êtes-vous sûr de vouloir supprimer l'équipement <b>${eqName}</b> ?}}`;
+            if (Object.keys(data).length > 0) {
+                text += ' <br/> {{Il est utilisé par ou utilise :}}<br/>';
+                var complement = null;
+                for (var i in data) {
+                    complement = '';
+                    if ('sourceName' in data[i])
+                        complement = ' (' + data[i].sourceName + ')';
+                    text += '- ' + '<a href="' + data[i].url + '" target="_blank">' + data[i].type + '</a> : <b>' + data[i].name + '</b>' + complement;
+                    text += ' <sup><a href="' + data[i].url + '" target="_blank"><i class="fas fa-external-link-alt"></i></a></sup><br/>';
+                }
+            }
+            text = text.substring(0, text.length - 2);
+            bootbox.confirm(text, function(result) {
+                if (result) {
+                    jeedom.eqLogic.remove({
+                        type: 'jMQTT',
+                        id: eqId,
+                        error: function(error) { $.fn.showAlert({ message: error.message, level: 'danger' }); },
+                        success: function() {
+                            var vars = getUrlVars();
+                            var url = 'index.php?';
+                            for (var i in vars) {
+                                if (i != 'id' && i != 'removeSuccessFull' && i != 'saveSuccessFull')
+                                    url += i + '=' + vars[i].replace('#', '') + '&';
+                            }
+                            url += 'removeSuccessFull=1';
+                            jeedomUtils.loadPage(url);
+                        }
+                    })
+                }
+            })
+        }
+    });
+});
+
+// Display eqLogic Advanced parameters
+$('.eqLogicAction[data-action=configureEq]').off('click').on('click', function() {
+    var eqId = $(this).closest('tr').find('.eId').value();
+    $('#md_modal3').dialog().load('index.php?v=d&modal=eqLogic.configure&eqLogic_id=' + eqId).dialog('open');
+});
+</script>

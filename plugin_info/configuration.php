@@ -16,217 +16,162 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
+require_once __DIR__ . '/../../../core/php/core.inc.php';
 include_file('core', 'authentification', 'php');
 if (!isConnect()) {
-	include_file('desktop', '404', 'php');
-	die();
+    include_file('desktop', '404', 'php');
+    die();
 }
 
+require_once __DIR__ . '/../core/class/jMQTT.class.php';
+sendVarToJS('version', config::byKey('version', 'jMQTT', 'unknown', true));
+
+
+// Send Mosquitto installation status
+sendVarToJS('mStatus', class_exists('jMQTT') ? jMQTTPlugin::mosquittoCheck() : array('installed' => false, 'message' => __("Etat inconnu", __FILE__), 'service' => ''));
+
+$docker = file_exists('/.dockerenv') || config::byKey('forceDocker', 'jMQTT', '0') == '1';
+sendVarToJS('dStatus', $docker);
+
 ?>
-<div class="eventDisplayMini"></div>
-<form class="form-horizontal">
-	<div class="row">
-	<div class="col-sm-6">
-		<legend><i class="fas fa-cog"></i>{{Installation}}</legend>
-		<div class="form-group">
-			<label class="col-sm-4 control-label">{{Installer Mosquitto}}</label>
-			<div class="col-sm-8">
-				<input type="checkbox" class="configKey" data-l1key="installMosquitto" />
-			</div>
-		</div>
-<?php if (file_exists('/.dockerenv') || config::byKey('forceDocker', 'jMQTT', '0') == '1') {
-	// To fix issue: https://community.jeedom.com/t/87727/39
-	$regularVal = jMQTT::get_callback_url();
-	$overrideEn = config::byKey('urlOverrideEnable', 'jMQTT', '0') == '1';
-	$overrideVal = config::byKey('urlOverrideValue', 'jMQTT', $regularVal);
-	$curVal = ($overrideEn) ? $overrideVal : $regularVal;
-?>
-		<div class="form-group">
-			<label class="col-sm-4 control-label" style="color:var(--al-danger-color);">{{URL de Callback}} <sup><i class="fa fa-question-circle tooltips"
-				title="{{Si Jeedom tourne en Docker, des problèmes d'identification entre ports internes et externes peuvent survenir.<br />Dans ce cas uniquement, il peut être nécessaire de personaliser cette url, car elle est mal détectée par jMQTT.<br /><b>N'activez ce champ et ne touchez à cette valeur que si vous savez ce que vous faites !</b>}}"></i></sup></label>
-			<div class="col-sm-7">
-				<div class="row">
-					<div class="col-sm-1">
-						<input type="checkbox" class="form-control" <?php if ($overrideEn) echo 'checked'; ?> id="jmqttUrlOverrideEnable" />
-					</div>
-					<div class="col-sm-10">
-						<input class="form-control<?php if (!$overrideEn) echo ' disabled'; ?>" id="jmqttUrlOverrideValue"
-							value="<?php echo $curVal; ?>" valOver="<?php echo $overrideVal; ?>" valStd="<?php echo $regularVal; ?>" />
-					</div>
-					<div class="col-sm-1">
-						<span class="btn btn-success btn-sm" id="bt_jmqttUrlOverride" style="position:relative;margin-top: 2px;" title="{{Appliquer}}">
-							<i class="fas fa-check"></i>
-						</span>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-1">
-			</div>
-		</div>
-<?php } ?>
-	</div>
-	<div class="col-sm-6">
-		<legend><i class="fas fa-key"></i>{{Certificats}}</legend>
-		<div class="form-group">
-			<label class="col-sm-5 control-label">{{Téléverser un nouveau Certificat}}</label>
-			<div class="col-sm-5">
-				<span class="btn btn-success btn-sm btn-file" style="position:relative;" title="{{Téléverser un Certificat}}">
-					<i class="fas fa-upload"></i><input id="mqttConfUpFile" type="file" name="file" accept=".crt, .pem, .key" data-url="plugins/jMQTT/core/ajax/jMQTT.ajax.php?action=fileupload&dir=certs">
-				</span>
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-sm-5 control-label">{{Supprimer un Certificat}}</label>
-			<div class="col-sm-5">
-				<select id="mqttConfDelFile" class="form-control" data-l1key="tobedeleted">
+<form class="form-horizontal" style="min-height: 250px;">
+    <div class="row">
+    <div class="col-lg-6 col-sm-12">
 <?php
-	$dir = realpath(dirname(__FILE__) . '/../' . jMQTT::PATH_CERTIFICATES);
-	foreach (ls($dir) as $file) {
-		if (in_array(strtolower(strrchr($file, '.')), array('.crt', '.key', '.pem')))
-			echo str_repeat(' ', 36) . '<option value="' . $file . '">' .$file . '</option>';
-	}
+if (!$docker) {
 ?>
-				</select>
-			</div>
-			<div class="col-sm-1">
-				<span class="btn btn-danger btn-sm btn-trash mqttDeleteFile" style="position:relative;margin-top: 2px;" title="{{Supprimer le fichier selectionné}}">
-					<i class="fas fa-trash"></i>
-				</span>
-			</div>
-		</div>
-		<div class="form-group"><br /></div>
-	</div>
-	</div>
+        <legend><i class="fas fa-toolbox"></i>{{Broker MQTT en local (Service Mosquitto)}}</legend>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">{{Etat d'installation}}&nbsp;<sup><i class="fa fa-question-circle tooltips"
+                title="{{Si Mosquitto est installé en local, jMQTT essaye de détecter par quel plugin.}}"></i></sup></label>
+            <div class="col-sm-8">
+                <span id="mosquittoStatus"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">{{Installation locale}}&nbsp;<sup><i class="fa fa-question-circle tooltips"
+                title="{{Ces boutons permettent de gérer l'installation de Mosquitto en tant que service local sur ce système Jeedom.}}"></i></sup></label>
+            <div class="col-sm-2">
+                <a id="bt_mosquittoInstall" class="btn btn-success disabled" style="width:100%;" title="{{Lance l'installation de Mosquitto en local.}}">
+                <i class="fas fa-sync fa-spin" style="display:none;"></i>&nbsp;<i class="fas fa-save"></i> {{Installer}}</a>
+            </div>
+            <div class="col-sm-2">
+                <a id="bt_mosquittoRepare" class="btn btn-warning disabled" style="width:100%;"
+                    title="{{Supprime la configuration actuelle de Mosquitto et remet la configuration par défaut de jMQTT.<br/>Cette option est particulièrement intéressante dans le cas où un autre plugin a déjà installé Mosquitto et que vous souhaitez que jMQTT le remplace.}}">
+                <i class="fas fa-sync fa-spin" style="display:none;"></i>&nbsp;<i class="fas fa-magic"></i> {{Réparer}}</a>
+            </div>
+            <div class="col-sm-2">
+                <a id="bt_mosquittoRemove" class="btn btn-danger disabled" style="width:100%;"
+                    title="{{Supprime complètement Mosquitto du système, par exemple dans le cas où vous voulez arrêter d'utiliser Mosquitto en local, ou pour le réinstaller avec un autre plugin.}}">
+                <i class="fas fa-sync fa-spin" style="display:none;"></i>&nbsp;<i class="fas fa-trash"></i> {{Supprimer}}</a>
+            </div>
+        </div>
+        <div class="form-group local-install" style="display:none;">
+            <label class="col-sm-4 control-label">{{Etat du service}}&nbsp;<sup><i class="fa fa-question-circle tooltips"
+                title="{{Si Mosquitto est installé en local, jMQTT remonte ici l'état du service (systemd).}}"></i></sup></label>
+            <div class="col-sm-8">
+                <span id="mosquittoService"></span>
+            </div>
+        </div>
+        <div class="form-group local-install" style="display:none;">
+            <label class="col-sm-4 control-label">{{Service Mosquitto}}&nbsp;<sup><i class="fa fa-question-circle tooltips"
+                title="{{Ces boutons permettent de gérer l'état de Mosquitto en tant que service local sur ce système Jeedom.}}"></i></sup></label>
+            <div class="col-sm-3">
+                <a id="bt_mosquittoReStart" class="btn btn-success" style="width:100%;" title="{{Démarre (ou redémarre) le service Mosquitto local.}}">
+                <i class="fas fa-play"></i> {{(Re)Démarrer}}</a>
+            </div>
+            <div class="col-sm-3">
+                <a id="bt_mosquittoStop" class="btn btn-danger disabled" style="width:100%;" title="{{Arrête le service Mosquitto local.}}">
+                <i class="fas fa-stop"></i> {{Arrêter}}</a>
+            </div>
+            <div class="col-sm-1">
+                <a id="bt_mosquittoEdit" class="btn btn-warning" style="width:100%;display:none;" title="{{Edition du fichier de configuration jMQTT.conf du service Mosquitto local.}}">
+                <i class="fas fa-pen"></i></a>
+            </div>
+        </div>
+<?php
+} /* !$docker */
+
+if ($docker) {
+    // To fix issue: https://community.jeedom.com/t/87727/39
+    $regularVal = jMQTTDaemon::get_callback_url();
+    $overrideEn = config::byKey('urlOverrideEnable', 'jMQTT', '0') == '1';
+    $overrideVal = config::byKey('urlOverrideValue', 'jMQTT', $regularVal);
+    $curVal = ($overrideEn) ? $overrideVal : $regularVal;
+?>
+        <legend><i class="fab fa-docker "></i>{{Paramètres spécifiques Docker}}</legend>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">{{URL de Callback du Démon}}&nbsp;<sup><i class="fa fa-question-circle tooltips"
+                title="{{Si Jeedom tourne en Docker, des problèmes d'identification entre ports internes et externes peuvent survenir.<br/>Dans ce cas uniquement, il peut être nécessaire de personnaliser cette url, car elle est mal détectée par jMQTT.<br/><b>N'activez ce champ et ne touchez à cette valeur que si vous savez ce que vous faites !</b>}}"></i></sup></label>
+            <div class="col-sm-7">
+                <div class="row">
+                    <div class="col-sm-1">
+                        <input type="checkbox" class="form-control" <?php if ($overrideEn) echo 'checked'; ?> id="jmqttUrlOverrideEnable" />
+                    </div>
+                    <div class="col-sm-10">
+                        <input class="form-control<?php if (!$overrideEn) echo ' disabled'; ?>" id="jmqttUrlOverrideValue"
+                            value="<?php echo $curVal; ?>" valOver="<?php echo $overrideVal; ?>" valStd="<?php echo $regularVal; ?>" />
+                    </div>
+                    <div class="col-sm-1">
+                        <span class="btn btn-success btn-sm" id="bt_jmqttUrlOverride" style="position:relative;margin-top: 2px;" title="{{Appliquer}}">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+<?php } /* $docker */ ?>
+    </div>
+    <div class="col-lg-6 col-sm-12">
+        <legend><i class="fas fa-folder-open"></i>{{Sauvegarder les équipements et la configuration de jMQTT}}</legend>
+        <div class="form-group">
+            <label class="col-sm-1 control-label">&nbsp;</label>
+            <div class="col-sm-5">
+                <a class="btn btn-success" id="bt_backupJMqttStart" style="width:100%;"><i class="fas fa-sync fa-spin" style="display:none;"></i> <i class="fas fa-save"></i> {{Lancer une sauvegarde}}</a>
+            </div>
+            <div class="col-sm-6"></div>
+        </div>
+        <legend><i class="fas fa-tape"></i>{{Sauvegardes disponibles}}</legend>
+        <div class="form-group">
+            <label class="col-sm-1 control-label">&nbsp;</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="sel_backupJMqtt">
+<?php
+// List all jMQTT backup files
+$backup_dir = realpath(__DIR__ . '/../' . jMQTTConst::PATH_BACKUP);
+$backups = ls($backup_dir, '*.tgz', false, array('files', 'quiet'));
+rsort($backups);
+foreach ($backups as $backup)
+    echo '<option value="'.$backup.'">'.$backup.' ('.sizeFormat(filesize($backup_dir.'/'.$backup)).")</option>\n";
+?>
+                </select>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label">&nbsp;</label>
+            <div class="col-sm-5">
+                <a class="btn btn-danger" id="bt_backupJMqttRemove" style="width:100%;"><i class="fas fa-trash"></i> {{Supprimer la sauvegarde}}</a>
+            </div>
+            <div class="col-sm-5">
+                <a class="btn btn-warning" id="bt_backupJMqttRestore" style="width:100%;"><i class="fas fa-sync fa-spin" style="display:none;"></i>&nbsp;<i class="far fa-file"></i> {{Restaurer la sauvegarde}} <span class="danger">(BETA)</span></a>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-1 control-label">&nbsp;</label>
+            <div class="col-sm-5">
+                    <a class="btn btn-success" id="bt_backupJMqttDownload" style="width:100%;"><i class="fas fa-cloud-download-alt"></i> {{Télécharger la sauvegarde}}</a>
+            </div>
+            <div class="col-sm-5">
+                <span class="btn btn-info btn-file" style="width:100%;">
+                    <i class="fas fa-cloud-upload-alt"></i> {{Ajouter une sauvegarde}}<input id="bt_backupJMqttUpload" type="file" accept=".tgz" name="file" data-url="plugins/jMQTT/core/ajax/jMQTT.ajax.php?action=fileupload&amp;dir=backup">
+                </span>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+    </div>
+    </div>
 </form>
-<script>
-$('#bt_jmqttUrlOverride').on('click', function (){
-	var $valEn = $('#jmqttUrlOverrideEnable').value()
-	$.ajax({
-		type: "POST",
-		url: "plugins/jMQTT/core/ajax/jMQTT.ajax.php",
-		data: {
-			action: "updateUrlOverride",
-			valEn: $valEn,
-			valUrl: (($valEn == '1') ? $('#jmqttUrlOverrideValue').value() : $('#jmqttUrlOverrideValue').attr('valOver'))
-		},
-		global : false,
-		dataType: 'json',
-		error: function(request, status, error) {
-			handleAjaxError(request, status, error);
-		},
-		success: function(data) {
-			if (data.state != 'ok')
-				$('.eventDisplayMini').showAlert({message: data.result,level: 'danger'});
-			else
-				$('.eventDisplayMini').showAlert({message: '{{Modification effectuée. Relancez le Démon.}}' ,level: 'success'});
-		}
-	});
-});
-
-$('#jmqttUrlOverrideEnable').change(function(){
-	$oVal = $('#jmqttUrlOverrideValue');
-	if ($(this).value() == '1') {
-		if ($oVal.attr('valOver') != "")
-			$oVal.value($oVal.attr('valOver'));
-		$oVal.removeClass('disabled');
-	} else {
-		$oVal.attr('valOver', $oVal.value());
-		$oVal.value($oVal.attr('valStd'));
-		$oVal.addClass('disabled');
-	}
-});
-
-// TODO Remove and use textareas in Brokers instead of fileupload
-$('#mqttConfUpFile').fileupload({
-	dataType: 'json',
-	replaceFileInput: false,
-	done: function (e, data) {
-		if (data.result.state != 'ok') {
-			$('.eventDisplayMini').showAlert({message: data.result.result, level: 'danger'});
-		} else {
-			$(new Option(data.result.result, data.result.result)).appendTo('#mqttConfDelFile');
-			$('#mqttConfDelFile option[value="'+data.result.result+'"]').attr('selected','selected');
-			switch (data.result.result.split('.').pop()) {
-				case 'crt':
-					$(new Option(data.result.result, data.result.result)).appendTo('#fTlsCaFile');
-					$('#fTlsCaFile option[value="'+data.result.result+'"]').attr('selected','selected');
-					break;
-				case 'pem':
-					$(new Option(data.result.result, data.result.result)).appendTo('#fTlsClientCertFile');
-					$('#fTlsClientCertFile option[value="'+data.result.result+'"]').attr('selected','selected');
-					break;
-				case 'key':
-					$(new Option(data.result.result, data.result.result)).appendTo('#fTlsClientKeyFile');
-					$('#fTlsClientKeyFile option[value="'+data.result.result+'"]').attr('selected','selected');
-					break;
-			}
-			$('.eventDisplayMini').showAlert({message: '{{Fichier ajouté avec succès}}', level: 'success'});
-		}
-		// setTimeout(function() { $('.eventDisplayMini').hideAlert(); }, 3000);
-		$('#mqttConfUpFile').val(null);
-	}
-});
-
-// TODO Remove and use textareas in Brokers instead of fileupload
-$('.mqttDeleteFile').on('click', function (){
-	var oriname = $("#mqttConfDelFile").val();
-	if (oriname !== null) {
-		$.ajax({
-			type: "POST",
-			url: "plugins/jMQTT/core/ajax/jMQTT.ajax.php",
-			data: {
-				action: "filedelete",
-				dir: "certs",
-				name: oriname
-			},
-			global : false,
-			dataType: 'json',
-			error: function(request, status, error) {
-				handleAjaxError(request, status, error);
-			},
-			success: function(data) {
-				if (data.state != 'ok') {
-					$('.eventDisplayMini').showAlert({message: data.result,level: 'danger'});
-				} else {
-					$("#mqttConfDelFile :selected").remove();
-					$('#fTlsCaFile option[value="'+oriname+'"]').remove(); // 3x black magic in Broker Tab
-					$('#fTlsClientCertFile option[value="'+oriname+'"]').remove();
-					$('#fTlsClientKeyFile option[value="'+oriname+'"]').remove();
-					$('.eventDisplayMini').showAlert({message: '{{Suppression effectuée}}' ,level: 'success'});
-				}
-				// setTimeout(function() { $('.eventDisplayMini').hideAlert() }, 3000);
-			}
-		});
-	}
-});
-
-$btSave = $('#bt_savePluginLogConfig');
-if (!$btSave.hasClass('jmqttLog')) {
-	$btSave.addClass('jmqttLog');
-	$btSave.on('click', function() {
-		if ($('#span_plugin_id').text() == 'jMQTT') {
-			sleep(1000);
-			$.ajax({
-				type: "POST",
-				url: "plugins/jMQTT/core/ajax/jMQTT.ajax.php",
-				data: {
-					action: "sendLoglevel"
-				},
-				global : false,
-				dataType: 'json',
-				error: function(request, status, error) {
-					handleAjaxError(request, status, error);
-				},
-				success: function(data) {
-					if (data.state == 'ok') {
-						$('.eventDisplayMini').showAlert({message: "{{Le démon est averti, il n'est pas nécessire de le redémarrer.}}" ,level: 'success'});
-					}
-					// setTimeout(function() { $('.eventDisplayMini').hideAlert() }, 3000);
-				}
-			});
-		}
-	});
-};
-
-</script>
+<?php include_file('desktop', 'jMQTT.config', 'js', 'jMQTT'); ?>
